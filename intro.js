@@ -65,7 +65,9 @@
             /* Precedence of positions, when auto is enabled */
             positionPrecedence: ["bottom", "top", "right", "left"],
             /* Disable an interaction with element? */
-            disableInteraction: false
+            disableInteraction: false,
+            /* Padding around steps */
+            widthHeightPadding: 10
         };
     }
 
@@ -305,12 +307,24 @@
             return;
         }
 
-        var nextStep = this._introItems[this._currentStep];
-        if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-            this._introBeforeChangeCallback.call(this, nextStep.element);
+        var nextStep = this._introItems[this._currentStep],
+            self = this;
+
+        if (nextStep && nextStep.beforeShow) {
+            nextStep.beforeShow.call(this, continueFunc);
+        }
+        else {
+            continueFunc();
         }
 
-        _showElement.call(this, nextStep);
+        function continueFunc() {
+            if (typeof (self._introBeforeChangeCallback) !== 'undefined') {
+                self._introBeforeChangeCallback.call(self, nextStep.element);
+            }
+            else {
+                _showElement.call(self, nextStep);
+            }
+        }
     }
 
     /**
@@ -326,12 +340,24 @@
             return false;
         }
 
-        var nextStep = this._introItems[--this._currentStep];
-        if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-            this._introBeforeChangeCallback.call(this, nextStep.element);
+        var nextStep = this._introItems[--this._currentStep],
+            self = this;
+
+        if (nextStep && nextStep.beforeShow) {
+            nextStep.beforeShow.call(this, continueFunc);
+        }
+        else {
+            continueFunc();
         }
 
-        _showElement.call(this, nextStep);
+        function continueFunc() {
+            if (typeof (self._introBeforeChangeCallback) !== 'undefined') {
+                self._introBeforeChangeCallback.call(self, nextStep.element);
+            }
+            else {
+                _showElement.call(self, nextStep);
+            }
+        }
     }
 
     /**
@@ -457,9 +483,9 @@
                 currentTooltipPosition = _determineAutoPosition.call(this, targetElement, tooltipLayer, currentTooltipPosition)
             }
         }
-        var targetOffset = _getOffset(targetElement)
-        var tooltipHeight = _getOffset(tooltipLayer).height
-        var windowSize = _getWinSize()
+        var targetOffset = _getOffset(targetElement);
+        var tooltipHeight = _getOffset(tooltipLayer).height;
+        var windowSize = _getWinSize();
         switch (currentTooltipPosition) {
             case 'top':
                 tooltipLayer.style.left = '15px';
@@ -627,7 +653,7 @@
 
             var currentElement = this._introItems[this._currentStep],
                 elementPosition = _getOffset(currentElement.element),
-                widthHeightPadding = 10;
+                widthHeightPadding = this._options.widthHeightPadding;
 
             if (currentElement.position == 'floating') {
                 widthHeightPadding = 0;
@@ -636,8 +662,8 @@
             //set new position to helper layer
             helperLayer.setAttribute('style', 'width: ' + (elementPosition.width + widthHeightPadding) + 'px; ' +
                                               'height:' + (elementPosition.height + widthHeightPadding) + 'px; ' +
-                                              'top:' + (elementPosition.top - 5) + 'px;' +
-                                              'left: ' + (elementPosition.left - 5) + 'px;');
+                                              'top:' + (elementPosition.top - (widthHeightPadding / 2)) + 'px;' +
+                                              'left: ' + (elementPosition.left - (widthHeightPadding / 2)) + 'px;');
 
         }
     }
@@ -1099,26 +1125,19 @@
      * @returns Element's position info
      */
     function _getOffset(element) {
+        var rect = element.getBoundingClientRect();
         var elementPosition = {};
 
         //set width
-        elementPosition.width = element.offsetWidth;
+        elementPosition.width = rect.width || element.offsetWidth;
 
         //set height
-        elementPosition.height = element.offsetHeight;
+        elementPosition.height = rect.height || element.offsetHeight;
 
-        //calculate element top and left
-        var _x = 0;
-        var _y = 0;
-        while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
-            _x += element.offsetLeft;
-            _y += element.offsetTop;
-            element = element.offsetParent;
-        }
         //set top
-        elementPosition.top = _y;
+        elementPosition.top = rect.top;
         //set left
-        elementPosition.left = _x;
+        elementPosition.left = rect.left;
 
         return elementPosition;
     }
