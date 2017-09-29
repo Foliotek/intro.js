@@ -1058,8 +1058,9 @@
                 if (i === (targetElement.step - 1)) anchorLink.className = 'active';
 
                 anchorLink.href = 'javascript:void(0);';
-                anchorLink.innerHTML = "&nbsp;";
+                anchorLink.innerHTML = "step " +  this._introItems[i].step;
                 anchorLink.setAttribute('data-stepnumber', this._introItems[i].step);
+                anchorLink.setAttribute('aria-hidden', 'true');
 
                 innerLi.appendChild(anchorLink);
                 ulContainer.appendChild(innerLi);
