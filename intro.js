@@ -963,7 +963,7 @@
 
             if (oldShowElement) {
                 var isFloating = oldShowElement.className.indexOf('introjs-floatingElement') >= 0;
-                
+
                 oldShowElement.className = oldShowElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, '');
 
                 isFloating && (oldShowElement.className += ' introjs-floatingElement');
@@ -1038,6 +1038,7 @@
 
             bulletsLayer.className = 'introjs-bullets';
 
+            tooltipExitButton.setAttribute('aria-label', 'close tutorial');
             tooltipExitButton.className = 'introjs-exitButton';
 
             if (this._options.showBullets === false) {
@@ -1057,8 +1058,9 @@
                 if (i === (targetElement.step - 1)) anchorLink.className = 'active';
 
                 anchorLink.href = 'javascript:void(0);';
-                anchorLink.innerHTML = "&nbsp;";
+                anchorLink.innerHTML = "step " +  this._introItems[i].step;
                 anchorLink.setAttribute('data-stepnumber', this._introItems[i].step);
+                anchorLink.setAttribute('aria-hidden', 'true');
 
                 innerLi.appendChild(anchorLink);
                 ulContainer.appendChild(innerLi);
@@ -1112,6 +1114,7 @@
 
             //next button
             var nextTooltipButton = document.createElement('a');
+            nextTooltipButton.setAttribute('aria-label', 'next step');
 
             nextTooltipButton.onclick = function () {
                 if (self._introItems.length - 1 != self._currentStep) {
@@ -1124,6 +1127,7 @@
 
             //previous button
             var prevTooltipButton = document.createElement('a');
+            prevTooltipButton.setAttribute('aria-label', 'previous step');
 
             prevTooltipButton.onclick = function () {
                 if (self._currentStep != 0) {
@@ -1139,6 +1143,7 @@
             skipTooltipButton.className = 'introjs-button introjs-skipbutton';
             skipTooltipButton.href = 'javascript:void(0);';
             skipTooltipButton.innerHTML = this._options.skipLabel;
+            skipTooltipButton.setAttribute('aria-label', 'complete tutorial');
 
             skipTooltipButton.onclick = function () {
                 if (self._introItems.length - 1 == self._currentStep && typeof (self._introCompleteCallback) === 'function') {
