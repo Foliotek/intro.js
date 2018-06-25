@@ -405,6 +405,9 @@
         if (prevStep && prevStep.demoTiming === 'after') {
             _doDemo.call(this, prevStep.demo).then(advance);
         }
+        else if (this._direction === 'backward' && nextStep.beforeBackward) {
+            nextStep.beforeBackward.call(this, advance);
+        }
         else {
             advance();
         }
