@@ -402,11 +402,11 @@
 
         var prevStep = this._introItems[this._currentStep - 1];
 
-        if (prevStep && prevStep.demoTiming === 'after') {
-            _doDemo.call(this, prevStep.demo).then(advance);
-        }
-        else if (this._direction === 'backward' && nextStep.beforeBackward) {
+        if (this._direction === 'backward' && nextStep.beforeBackward) {
             nextStep.beforeBackward.call(this, advance);
+        }
+        else if (prevStep && prevStep.demoTiming === 'after') {
+            _doDemo.call(this, prevStep.demo).then(advance);
         }
         else {
             advance();
