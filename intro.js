@@ -1524,7 +1524,7 @@
             needsCircle = !clickCircle,
             globDef = defer(),
             fadeSpeed = 500,
-            el = $(sel)[0];
+            el = document.querySelector(sel);
 
         if (el) {
             if (needsCursor) {
